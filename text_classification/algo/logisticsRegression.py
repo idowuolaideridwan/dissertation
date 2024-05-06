@@ -31,12 +31,12 @@ def preprocess_text(text):
     return ' '.join(filtered_words)
 
 # Load and preprocess the dataset
-df = pd.read_csv('../data/dataset_v2.csv')
+df = pd.read_csv('../data/discourse/cleaned_dataset.csv')
 df['comment'] = df['comment'].apply(preprocess_text)
 
 # Handle class imbalance
-df_majority = df[df['comment_type'] == 'answer']
-df_minority = df[df['comment_type'] == 'question']
+df_majority = df[df['comment_type'] == 1]   # question
+df_minority = df[df['comment_type'] == 2]   # answer
 df_minority_upsampled = resample(df_minority, replace=True, n_samples=len(df_majority), random_state=123)
 df_balanced = pd.concat([df_majority, df_minority_upsampled])
 
