@@ -15,9 +15,7 @@ click==8.0.3
 comtypes==1.1.10
 mysql==0.0.3
 mysqlclient==2.2.1
-navigator-updater==0.2.1
 nltk==3.6.5
-openai==0.28.0
 pathspec==0.7.0
 patsy==0.5.2
 pep8==1.7.1
