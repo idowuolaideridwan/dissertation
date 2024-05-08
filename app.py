@@ -7,49 +7,10 @@ from functools import wraps
 import bcrypt
 import logging
 import datetime
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
 
 app = Flask(__name__)
 app.secret_key = b'\x00\xdc8\xfa\xb1\xd7\x06\x96\x02\xdb<F@7\xf0\xf3\xbf$\x8cb\x94w\xe8\xa3'
-
-# Setup a basic logger
-logging.basicConfig(level=logging.INFO)
-
-def load_model(model_name="unitary/toxic-bert"):
-    """
-    Load the pre-trained model and tokenizer.
-    """
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForSequenceClassification.from_pretrained(model_name)
-    return tokenizer, model
-
-def classify_comment(comment, tokenizer, model):
-    """
-    Classify a comment as appropriate or inappropriate.
-    """
-    inputs = tokenizer(comment, return_tensors="pt", truncation=True, max_length=512)
-    with torch.no_grad():
-        logits = model(**inputs).logits
-    probabilities = torch.sigmoid(logits).squeeze()  # Convert logits to probabilities
-    is_inappropriate = probabilities[0] > 0.5  # Threshold can be adjusted based on needs
-    return 1 if is_inappropriate else 0
-    #return "Inappropriate" if is_inappropriate else "Appropriate"
-
-@app.route('/classify', methods=['POST'])
-def classify():
-    """
-    Endpoint to classify a comment.
-    """
-    # Load the model and tokenizer
-    tokenizer, model = load_model()
-
-    # Get the comment from the request
-    comment = request.json.get('comment', '')
-    # Perform classification
-    classification = classify_comment(comment, tokenizer, model)
-    # Return the classification result
-    return jsonify({'classification': classification})
 
 def login_required(f):
     @wraps(f)
@@ -145,11 +106,8 @@ def add_comment():
     end_time = request.form.get('endTime', type=int)
     random_string = generate_random_alphanumeric(10)
 
-    # Load the model and tokenizer
-    tokenizer, model = load_model()
-
     # Perform toxic classification
-    toxic_type = classify_comment(comment_content, tokenizer, model)
+    toxic_type = 0
 
     # Perform Question and Answer Classification
     qa_type = 1
