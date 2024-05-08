@@ -29,7 +29,6 @@ pycurl==7.44.1
 pydantic==2.5.3
 pydantic_core==2.14.6
 pydub==0.25.1
-pyodbc===4.0.0-unsupported
 PyPDF2==3.0.1
 pyreadline==2.1
 pytest==6.2.4
