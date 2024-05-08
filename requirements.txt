@@ -13,6 +13,8 @@ brotlipy==0.7.0
 certifi==2021.10.8
 click==8.0.3
 comtypes==1.1.10
+Flask
+Gunicorn
 mysql==0.0.3
 mysqlclient==2.2.1
 nltk==3.6.5
