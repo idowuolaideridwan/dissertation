@@ -1,3 +1,5 @@
+scikit-learn
+joblib
 pymysql
 bcrypt==3.2.0
 logging
