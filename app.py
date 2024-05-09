@@ -16,6 +16,8 @@ import nltk
 app = Flask(__name__)
 app.secret_key = b'\x00\xdc8\xfa\xb1\xd7\x06\x96\x02\xdb<F@7\xf0\xf3\xbf$\x8cb\x94w\xe8\xa3'
 
+nltk.download('punkt')  # Ensure required NLTK resources are downloaded
+
 # Path to the folder containing saved models
 models_folder_path = 'text_classification/algo/'
 
