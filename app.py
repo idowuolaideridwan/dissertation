@@ -191,7 +191,7 @@ def video_learning():
 
 if __name__ == '__main__':
     # Path to the folder containing saved models
-    models_folder_path = 'text_classification/algo/models/'
+    models_folder_path = 'text_classification/algo/'
 
     # Load all models
     models = load_models(models_folder_path)
