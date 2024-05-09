@@ -9,8 +9,57 @@ import logging
 import datetime
 import torch
 
+import os
+import joblib
+import nltk
+
 app = Flask(__name__)
 app.secret_key = b'\x00\xdc8\xfa\xb1\xd7\x06\x96\x02\xdb<F@7\xf0\xf3\xbf$\x8cb\x94w\xe8\xa3'
+
+# Load the rule-based classifier
+def rule_based_classifier(text):
+    question_words = {'what', 'where', 'when', 'how', 'why', 'did', 'do', 'does', 'have', 'has', 'am', 'is', 'are', 'can',
+                      'could', 'may', 'would', 'will', 'should', "didn't", "doesn't", "haven't", "isn't", "aren't",
+                      "can't", "couldn't", "wouldn't", "won't", "shouldn't", '?'}
+    words = set(nltk.word_tokenize(text.lower()))
+    return 'question' if question_words.intersection(words) else 'non-question'
+
+# Load the logistic regression model
+def load_model(model_path):
+    return joblib.load(model_path)
+
+# Classify a sentence using the logistic regression model
+def logistic_regression_classifier(model, text):
+    prediction = model.predict([text])
+    return prediction[0]
+
+# Determine the classification of text using a hybrid approach
+def hybrid_classifier(models, text):
+    if rule_based_classifier(text) == 'question':
+        return 'question'
+    else:
+        model_name = 'logistic_regression_model'  # Example, adjust based on your model naming
+        if model_name in models:
+            return logistic_regression_classifier(models[model_name], text)
+        else:
+            return 'non-question'
+
+# Load all models from the specified folder
+def load_models(models_folder_path):
+    models = {}
+    for filename in os.listdir(models_folder_path):
+        if filename.endswith('.pkl'):
+            model_path = os.path.join(models_folder_path, filename)
+            model_name = filename.split('.pkl')[0]
+            models[model_name] = load_model(model_path)
+    return models
+
+# Define the API endpoint for classifying sentences
+@app.route('/classify', methods=['POST'])
+def classify_sentence():
+    sentence = request.json.get('sentence', '')
+    classification_result = hybrid_classifier(models, sentence)
+    return jsonify({'classification_result': classification_result})
 
 def login_required(f):
     @wraps(f)
@@ -141,4 +190,10 @@ def video_learning():
     return render_template('video_learning.html', comments=comments)
 
 if __name__ == '__main__':
+    # Path to the folder containing saved models
+    models_folder_path = 'text_classification/algo/models/'
+
+    # Load all models
+    models = load_models(models_folder_path)
+
     app.run(debug=True)
