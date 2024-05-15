@@ -36,7 +36,7 @@ df['comment'] = df['comment'].apply(preprocess_text)
 
 # Handle class imbalance
 df_majority = df[df['comment_type'] == 1]   # question
-df_minority = df[df['comment_type'] == 2]   # answer
+df_minority = df[df['comment_type'] == 0]   # answer
 df_minority_upsampled = resample(df_minority, replace=True, n_samples=len(df_majority), random_state=123)
 df_balanced = pd.concat([df_majority, df_minority_upsampled])
 
